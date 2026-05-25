@@ -139,8 +139,8 @@ Jegere Felix
 
 ## Links
 
-- Website: https://core-numero.vercel.app
-- GitHub: https://github.com/felix-jegere/CoreNumero
+- Website: https://corenumero.vercel.app
+- GitHub: https://github.com/felix-jegere/corenumero-new
 
 ---
 
