@@ -6,7 +6,7 @@ import './App.css';
 
 function App() {
   const [results, setResults] = useState(null);
-
+const currentYear = new Date().getFullYear()
   return (
     <div className="app-container">
       {/* Navigation */}
@@ -37,7 +37,8 @@ function App() {
       {/* Footer */}
       <footer className="footer">
         <div className="footer-content">
-          <p>&copy; 2026 CoreNumero. Blending ancient wisdom with modern AI.</p>
+          <p>&copy; {currentYear} CoreNumero. Blending ancient wisdom with modern AI.</p>
+          <p>With ❤️ by <a href="https://github.com/felix-jegere/" target='_blank' style={{color: 'inherit'}}>Jegere Felix</a></p>
         </div>
       </footer>
     </div>
