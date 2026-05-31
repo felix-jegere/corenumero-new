@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import {Analytics} from '@vercel/analytics/react';
+
 import NumerologyCalculator from './NumerologyCalculator';
 import NumerologyResults from './NumerologyResults';
 import NumerologyInfo from './NumerologyInfo';
@@ -41,6 +43,7 @@ const currentYear = new Date().getFullYear()
           <p>With ❤️ by <a href="https://github.com/felix-jegere/" target='_blank' style={{color: 'inherit'}}>Jegere Felix</a></p>
         </div>
       </footer>
+      <Analytics />
     </div>
   );
 }
