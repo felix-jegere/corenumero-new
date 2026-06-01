@@ -1,3 +1,5 @@
+import * as Sentry from "@sentry/react";
+
 // Gemini AI Integration Service
 let currentYear = new Date().getFullYear();
 const SYSTEM_PROMPT = `Role: 
@@ -65,7 +67,8 @@ export const getGeminiInsights = async (userName, numbers) => {
       insight: insight || getPlaceholderInsight(userName, numbers),
     };
   } catch (error) {
-    console.error('Error generating insights:', error);
+    Sentry.captureException(error);
+    Sentry.logger.error('Error generating insights:', error);
     return {
       success: false,
       insight: getPlaceholderInsight(userName, numbers),

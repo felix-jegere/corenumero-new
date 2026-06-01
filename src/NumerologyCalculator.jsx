@@ -1,4 +1,7 @@
 import { useState } from 'react';
+
+import * as Sentry from '@sentry/react';
+
 import { calculateNumerologyProfile } from './numerologyCalc';
 import { getGeminiInsights } from './geminiService';
 
@@ -24,6 +27,7 @@ export default function NumerologyCalculator({ onResults }) {
 
     if (!formData.fullName || !formData.dateOfBirth) {
       setError('Please enter both your name and date of birth');
+      Sentry.logger.info('Validation error: Missing name or date of birth');
       return;
     }
 
@@ -48,6 +52,8 @@ export default function NumerologyCalculator({ onResults }) {
       }, 100);
     } catch (err) {
       setError('An error occurred. Please try again.');
+      Sentry.captureException(err);
+      Sentry.logger.error('Error during numerology calculation or AI insight retrieval', err);
       console.error(err);
     } finally {
       setLoading(false);
