@@ -4,7 +4,7 @@
 
 ### 1. Install Dependencies
 ```bash
-cd e:\flx\corenumero-new
+cd corenumero-new
 npm install
 ```
 
@@ -16,8 +16,11 @@ npm install
 
 ### 3. Configure Environment
 ```bash
-# Create .env file
-copy .env.example .env
+# Create .env file (macOS/Linux)
+cp .env.example .env
+
+# On Windows PowerShell, use:
+# copy .env.example .env
 
 # Edit .env and add your API key:
 # VITE_GEMINI_API_KEY=your_key_here

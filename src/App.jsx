@@ -1,12 +1,22 @@
-import { useState } from 'react';
+import { Suspense, lazy, useState } from 'react';
 import NumerologyCalculator from './NumerologyCalculator';
-import NumerologyResults from './NumerologyResults';
 import NumerologyInfo from './NumerologyInfo';
+import { parseSharedInput } from './shareLink';
 import './App.css';
+
+// Code-split: markdown + AI-heavy views only load when needed.
+const NumerologyResults = lazy(() => import('./NumerologyResults'));
+const NumerologyCompatibility = lazy(() => import('./NumerologyCompatibility'));
+
+const currentYear = new Date().getFullYear();
 
 function App() {
   const [results, setResults] = useState(null);
-const currentYear = new Date().getFullYear()
+  const [tab, setTab] = useState('reading');
+  const [shared] = useState(() => parseSharedInput());
+
+  const hasSharedLink = Boolean(shared.name && shared.dob);
+
   return (
     <div className="app-container">
       {/* Navigation */}
@@ -25,11 +35,46 @@ const currentYear = new Date().getFullYear()
         </div>
       </section>
 
-      {/* Calculator */}
-      <NumerologyCalculator onResults={setResults} />
+      {/* Tabs */}
+      <div className="tabs">
+        <button
+          type="button"
+          className={tab === 'reading' ? 'tab-btn active' : 'tab-btn'}
+          onClick={() => setTab('reading')}
+        >
+          My Reading
+        </button>
+        <button
+          type="button"
+          className={tab === 'compatibility' ? 'tab-btn active' : 'tab-btn'}
+          onClick={() => setTab('compatibility')}
+        >
+          Compatibility
+        </button>
+      </div>
 
-      {/* Results */}
-      {results && <NumerologyResults results={results} />}
+      {tab === 'reading' ? (
+        <>
+          {/* Calculator */}
+          <NumerologyCalculator
+            onResults={setResults}
+            initialName={shared.name}
+            initialDob={shared.dob}
+            autoRun={hasSharedLink}
+          />
+
+          {/* Results */}
+          {results && (
+            <Suspense fallback={<div className="results-section"><p style={{ textAlign: 'center' }}>Loading your profile…</p></div>}>
+              <NumerologyResults results={results} />
+            </Suspense>
+          )}
+        </>
+      ) : (
+        <Suspense fallback={<div className="results-section"><p style={{ textAlign: 'center' }}>Loading compatibility check…</p></div>}>
+          <NumerologyCompatibility />
+        </Suspense>
+      )}
 
       {/* Numerology Info */}
       <NumerologyInfo />
@@ -38,7 +83,7 @@ const currentYear = new Date().getFullYear()
       <footer className="footer">
         <div className="footer-content">
           <p>&copy; {currentYear} CoreNumero. Blending ancient wisdom with modern AI.</p>
-          <p>With ❤️ by <a href="https://github.com/felix-jegere/" target='_blank' style={{color: 'inherit'}}>Jegere Felix</a></p>
+          <p>With ❤️ by <a href="https://github.com/felix-jegere/" target='_blank' rel='noreferrer' style={{color: 'inherit'}}>Jegere Felix</a></p>
         </div>
       </footer>
     </div>

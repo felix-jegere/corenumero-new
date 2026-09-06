@@ -1,7 +1,7 @@
 {
   "name": "corenumero",
   "private": true,
-  "version": "1.0",
+  "version": "1.0.0",
   "description": "An advanced numerology web application that blends ancient Pythagorean calculations with modern Gemini AI to provide deep insights into your life path, destiny, and personality.",
   "type": "module",
   "scripts": {
@@ -13,11 +13,9 @@
   "dependencies": {
     "@google/genai": "^1.52.0",
     "@tailwindcss/vite": "^4.3.0",
-    "lucide-react": "^1.16.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-markdown": "^10.1.0",
-    "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
     "tailwindcss": "^4.3.0"
   },

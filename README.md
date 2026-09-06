@@ -5,6 +5,9 @@ An advanced numerology web application that blends ancient Pythagorean calculati
 ## Features
 
 - **Pythagorean Numerology**: Calculate Life Path, Expression, Soul Urge, and Personality numbers
+- **Personal Cycles**: Personal Year, Month, and Day numbers for today
+- **Compatibility Check**: Compare two profiles with a pairing score and AI synastry reading
+- **Shareable Links**: Every reading gets a copyable URL (`#n=...&d=...`) that reloads the full reading
 - **Gemini AI Integration**: Get intelligent, personalized insights powered by Google's Gemini AI
 - **Modern UI**: Beautiful, responsive glassmorphism design with gradient accents
 - **Master Numbers**: Support for master numbers (11, 22, 33) in Pythagorean system
@@ -67,12 +70,14 @@ npm run preview
 
 ```
 src/
-├── App.jsx                    # Main app component
+├── App.jsx                    # Main app component (tabs: reading / compatibility)
 ├── App.css                    # Core styling
-├── numerologyCalc.js          # Pythagorean numerology calculations
-├── geminiService.js           # Gemini AI integration
+├── numerologyCalc.js          # Pythagorean numerology calculations + cycles + compatibility scoring
+├── geminiService.js           # Gemini AI integration (lazy-loaded SDK)
+├── shareLink.js               # Shareable reading-link encode/decode
 ├── NumerologyCalculator.jsx   # Form component for input
-├── NumerologyResults.jsx      # Results display component
+├── NumerologyResults.jsx      # Results display component (core numbers + cycles)
+├── NumerologyCompatibility.jsx# Two-person compatibility check
 ├── NumerologyInfo.jsx         # Educational info cards
 ├── index.css                  # Base styles
 └── main.jsx                   # Entry point

@@ -1,14 +1,26 @@
-import { useState } from 'react';
-import { calculateNumerologyProfile } from './numerologyCalc';
+import { useEffect, useRef, useState } from 'react';
+import { calculateCycleProfile, calculateNumerologyProfile } from './numerologyCalc';
 import { getGeminiInsights } from './geminiService';
+import { buildShareHash } from './shareLink';
 
-export default function NumerologyCalculator({ onResults }) {
+const MAX_NAME_LENGTH = 100;
+
+export default function NumerologyCalculator({
+  onResults,
+  initialName = '',
+  initialDob = '',
+  autoRun = false,
+}) {
   const [formData, setFormData] = useState({
-    fullName: '',
-    dateOfBirth: '',
+    fullName: initialName,
+    dateOfBirth: initialDob,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const autoRan = useRef(false);
+
+  // `type="date"` value is YYYY-MM-DD, so a plain string comparison works.
+  const today = new Date().toISOString().slice(0, 10);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,28 +31,47 @@ export default function NumerologyCalculator({ onResults }) {
     setError('');
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const runCalculation = async (rawName, dateOfBirth) => {
+    const fullName = rawName.trim().replace(/\s+/g, ' ');
 
-    if (!formData.fullName || !formData.dateOfBirth) {
+    if (!fullName || !dateOfBirth) {
       setError('Please enter both your name and date of birth');
+      return;
+    }
+
+    if (fullName.length > MAX_NAME_LENGTH) {
+      setError(`Please keep your name under ${MAX_NAME_LENGTH} characters`);
+      return;
+    }
+
+    if (dateOfBirth > today) {
+      setError('Date of birth cannot be in the future');
       return;
     }
 
     setLoading(true);
 
     try {
-      const numbers = calculateNumerologyProfile(
-        formData.fullName,
-        formData.dateOfBirth
-      );
+      const numbers = calculateNumerologyProfile(fullName, dateOfBirth);
 
-      const aiInsight = await getGeminiInsights(formData.fullName, numbers);
+      if (Object.values(numbers).every((n) => n === null)) {
+        setError('Could not calculate numbers from that input. Please check your name and date.');
+        return;
+      }
+
+      const cycles = calculateCycleProfile(dateOfBirth);
+      const aiInsight = await getGeminiInsights(fullName, numbers);
+
+      // Persist a shareable link for this reading (no page jump).
+      window.history.replaceState(null, '', buildShareHash(fullName, dateOfBirth));
 
       onResults({
-        name: formData.fullName,
+        name: fullName,
+        dob: dateOfBirth,
         numbers,
-        insight: aiInsight.insight || aiInsight,
+        cycles,
+        insight: aiInsight.insight,
+        aiSuccess: aiInsight.success,
       });
 
       setTimeout(() => {
@@ -53,6 +84,20 @@ export default function NumerologyCalculator({ onResults }) {
       setLoading(false);
     }
   };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    runCalculation(formData.fullName, formData.dateOfBirth);
+  };
+
+  // Auto-run once when opened via a shared link.
+  useEffect(() => {
+    if (autoRun && !autoRan.current && initialName && initialDob) {
+      autoRan.current = true;
+      runCalculation(initialName, initialDob);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <section className="calculator-section">
@@ -72,6 +117,7 @@ export default function NumerologyCalculator({ onResults }) {
               value={formData.fullName}
               onChange={handleChange}
               placeholder="Enter your full name"
+              maxLength={MAX_NAME_LENGTH}
               disabled={loading}
             />
           </div>
@@ -84,6 +130,7 @@ export default function NumerologyCalculator({ onResults }) {
               name="dateOfBirth"
               value={formData.dateOfBirth}
               onChange={handleChange}
+              max={today}
               disabled={loading}
             />
           </div>
