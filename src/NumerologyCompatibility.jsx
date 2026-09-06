@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import * as Sentry from '@sentry/react';
+
 import { calculateNumerologyProfile, scoreCompatibility } from './numerologyCalc';
 import { getCompatibilityInsights } from './geminiService';
 
@@ -66,6 +68,7 @@ export default function NumerologyCompatibility() {
       }, 100);
     } catch (err) {
       setError('An error occurred. Please try again.');
+      Sentry.captureException(err);
       console.error(err);
     } finally {
       setLoading(false);

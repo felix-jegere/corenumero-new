@@ -1,4 +1,6 @@
 import { Suspense, lazy, useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
+
 import NumerologyCalculator from './NumerologyCalculator';
 import NumerologyInfo from './NumerologyInfo';
 import { parseSharedInput } from './shareLink';
@@ -86,6 +88,7 @@ function App() {
           <p>With ❤️ by <a href="https://github.com/felix-jegere/" target='_blank' rel='noreferrer' style={{color: 'inherit'}}>Jegere Felix</a></p>
         </div>
       </footer>
+      <Analytics />
     </div>
   );
 }

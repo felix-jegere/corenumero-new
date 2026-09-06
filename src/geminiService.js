@@ -1,3 +1,5 @@
+import * as Sentry from "@sentry/react";
+
 // Gemini AI Integration Service
 // NOTE: The API key is exposed in the client bundle (Vite `VITE_` vars are
 // public). Fine for a demo; for production, proxy Gemini calls through a
@@ -118,7 +120,8 @@ export const getGeminiInsights = async (userName, numbers) => {
 
     return { success: true, insight };
   } catch (error) {
-    console.error('Error generating insights:', error);
+    Sentry.captureException(error);
+    Sentry.logger.error('Error generating insights:', error);
     return {
       success: false,
       insight: getPlaceholderInsight(safeName, numbers),
@@ -152,7 +155,8 @@ export const getCompatibilityInsights = async (nameA, numbersA, nameB, numbersB)
 
     return { success: true, insight };
   } catch (error) {
-    console.error('Error generating compatibility insights:', error);
+    Sentry.captureException(error);
+    Sentry.logger.error('Error generating compatibility insights:', error);
     return {
       success: false,
       insight: getPlaceholderCompatibility(safeA, numbersA, safeB, numbersB),
